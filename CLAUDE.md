@@ -27,11 +27,11 @@ The entire application is contained in `app.R` with the following main sections:
 4. **UI Definition** (lines 240-558): Custom-styled Shiny dashboard UI with professional header
 5. **Server Logic** (lines 560+): Reactive server functions for data processing, navigation, and map rendering
 
-### Custom UI Design
-The application features a **hybrid navigation approach** that combines aesthetics with reliability:
-- **Custom Header**: Fixed gradient header with logo, branding, and navigation icons
-- **Hidden Sidebar**: Traditional `sidebarMenu` navigation (functional but visually hidden)
-- **Bridge Navigation**: Header icons trigger sidebar navigation programmatically via `updateTabItems()`
+### Custom UI Design - MVP Version
+The application currently uses a **traditional navigation approach** for MVP stability:
+- **Custom Header**: Branded header with logo and professional styling (navigation icons removed)
+- **Traditional Sidebar**: Standard `sidebarMenu` navigation (reliable and proven)
+- **Simplified Design**: Navigation icons removed to prevent hanging issues
 
 ### Key Data Files
 - `data/tract_data.rds`: Primary NYC census tract demographic data
@@ -53,7 +53,7 @@ The application features a **hybrid navigation approach** that combines aestheti
 - **Custom Gradient**: `#28202c` to `#342a3a` background
 - **Logo Integration**: Reground Design logo with brightness enhancement
 - **Typography**: Professional title "Audience Insight Tool" with subtitle
-- **Navigation Icons**: Map (📍) and table (📊) icons with hover effects and active states
+- **Clean Layout**: Streamlined design focused on branding (navigation icons removed for MVP)
 
 ### Color Scheme
 - **Primary Brand Color**: `#28202c` (dark purple)
@@ -69,12 +69,12 @@ The application features a **hybrid navigation approach** that combines aestheti
 
 ## Key Components
 
-### Navigation System
-The app uses a sophisticated **bridge navigation pattern**:
-1. **Visual Navigation**: Beautiful header icons for user interaction
-2. **Functional Navigation**: Hidden sidebar menu for reliable Shiny routing
-3. **Bridge Logic**: `observeEvent()` handlers connect header clicks to `updateTabItems()`
-4. **State Management**: Button styling updates to reflect active tab
+### Navigation System (MVP)
+The app uses a **traditional navigation approach** for MVP stability:
+1. **Standard Sidebar**: Reliable `sidebarMenu` with `menuItem` components
+2. **Custom Header**: Professional branding without navigation functionality
+3. **Simplified Architecture**: No custom navigation logic to avoid reactive loops
+4. **Future Enhancement**: Header navigation icons to be implemented post-MVP
 
 ### Demographic Layers
 The app supports 14 demographic variables including:
@@ -90,7 +90,7 @@ The app supports 14 demographic variables including:
 - **Color Schemes**: Four viridis color palettes for map visualization
 - **Top N Filter**: Display only the highest-scoring neighborhoods (with solid color styling)
 - **Spatial Overlays**: Toggle schools, libraries, and MOMA location on the map
-- **Header Navigation**: Professional icon-based navigation with visual feedback
+- **Traditional Navigation**: Standard sidebar menu for reliable MVP operation
 
 ### Map Implementation
 Uses Leaflet for interactive mapping with:
@@ -100,26 +100,26 @@ Uses Leaflet for interactive mapping with:
 - Custom popup content generation
 - Conditional styling based on filter state
 
-## Navigation Architecture
+## Navigation Architecture (MVP)
 
-### Traditional Sidebar (Hidden)
+### Traditional Sidebar Navigation
 ```r
 dashboardSidebar(
   sidebarMenu(
-    id = "sidebar_menu",
-    menuItem("Interactive Map", tabName = "map"),
-    menuItem("Data Summary", tabName = "summary")
+    menuItem("Interactive Map", tabName = "map", icon = icon("map")),
+    menuItem("Data Summary", tabName = "summary", icon = icon("table"))
   )
 )
 ```
 
-### Custom Header Navigation
+### Custom Header (Branding Only)
 ```r
-# Header icons trigger updateTabItems()
-observeEvent(input$nav_to_map, {
-  updateTabItems(session, "sidebar_menu", "map")
-  # Update button styling for visual feedback
-})
+dashboardHeader(
+  title = tags$div(
+    # Custom branded header with logo and titles
+    # No navigation functionality for MVP stability
+  )
+)
 ```
 
 ## Data Flow
@@ -129,7 +129,7 @@ observeEvent(input$nav_to_map, {
 3. `calculate_composite_index()` normalizes and combines selected variables
 4. Map renders with color-coded percentile rankings OR solid color for Top N
 5. Interactive tooltips display formatted demographic details
-6. Header navigation provides smooth tab switching
+6. Traditional sidebar navigation provides reliable tab switching
 
 ## Dependencies
 
@@ -144,11 +144,16 @@ Required R packages are loaded at the top of `app.R`:
 
 ## Important Notes for Future Development
 
-### Navigation Pattern
-- **DO NOT** remove the hidden sidebar - it provides the reliable navigation backbone
-- **DO NOT** use complex conditional rendering (renderUI) - it can cause hanging
-- **DO** use the bridge pattern: header icons → `updateTabItems()` → sidebar navigation
-- **DO** maintain button styling updates for visual feedback
+### Current MVP Architecture
+- **Traditional Navigation**: Uses standard `sidebarMenu` for stability and reliability
+- **Custom Header**: Professional branding without navigation functionality
+- **No Complex Logic**: Avoids reactive loops that can cause app hanging
+
+### Future Enhancements (Post-MVP)
+- **Header Navigation Icons**: Add map/table icons to custom header
+- **Bridge Navigation**: Connect header icons to sidebar via `updateTabItems()`
+- **Visual Feedback**: Update button styling to reflect active tab state
+- **Testing Required**: Ensure navigation doesn't introduce hanging issues
 
 ### Styling Consistency
 - **Brand Color**: Always use `#28202c` for primary elements

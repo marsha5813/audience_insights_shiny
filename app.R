@@ -268,19 +268,21 @@ ui <- dashboardPage(
       ),
       
       # Right side - Navigation icons (these will trigger the sidebar menu)
-      tags$div(
-        style = "display: flex; gap: 15px;",
-        actionButton("nav_to_map", "", 
-                    icon = icon("map"), 
-                    class = "nav-button",
-                    style = "background: rgba(231,76,60,0.8); border: 2px solid #e74c3c; color: white; border-radius: 8px; padding: 12px 16px; font-size: 18px; transition: all 0.3s ease;",
-                    title = "Interactive Map"),
-        actionButton("nav_to_summary", "", 
-                    icon = icon("table"), 
-                    class = "nav-button",
-                    style = "background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: white; border-radius: 8px; padding: 12px 16px; font-size: 18px; transition: all 0.3s ease;",
-                    title = "Data Summary")
-      )
+      # Currently commenting these out because they're breaking
+      # TODO: Fix this
+      #tags$div(
+      #  style = "display: flex; gap: 15px;",
+      #  actionButton("nav_to_map", "", 
+      #              icon = icon("map"), 
+      #              class = "nav-button",
+      #              style = "background: rgba(231,76,60,0.8); border: 2px solid #e74c3c; color: white; border-radius: 8px; padding: 12px 16px; font-size: 18px; transition: all 0.3s ease;",
+      #              title = "Interactive Map"),
+      #  actionButton("nav_to_summary", "", 
+      #              icon = icon("table"), 
+      #              class = "nav-button",
+      #              style = "background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: white; border-radius: 8px; padding: 12px 16px; font-size: 18px; transition: all 0.3s ease;",
+      #              title = "Data Summary")
+      #)
     ),
     
     # Add top margin to account for fixed header
