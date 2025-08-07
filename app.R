@@ -48,11 +48,11 @@ layer_variables <- list(
     variable = "hh_with_adults_65plus",
     description = "Percentage of households with at least one adult aged 65 or older"
   ),
-  school_enrollment = list(
-    label = "% School Enrollment", 
-    variable = "school_enrollment_rate",
-    description = "Percentage of the population enrolled in school"
-  ),
+#  school_enrollment = list(
+#    label = "% School Enrollment", 
+#    variable = "school_enrollment_rate",
+#    description = "Percentage of the population enrolled in school"
+#  ),
   elementary_school = list(
     label = "% Elementary School Enrollment", 
     variable = "school_enrollment_rate_elementary",
@@ -233,17 +233,59 @@ create_tooltip_content <- function(data) {
   })
 }
 
+# Add resource path for images
+addResourcePath("images", "images")
+
 # UI Definition
 ui <- dashboardPage(
-  dashboardHeader(title = "Audience Insights"),
+  # Disable default header - we'll create our own
+  dashboardHeader(disable = TRUE),
   
+  # Traditional sidebar with navigation - but hidden visually
   dashboardSidebar(
     sidebarMenu(
+      id = "sidebar_menu",
       menuItem("Interactive Map", tabName = "map", icon = icon("map")),
-      menuItem("Data Summary", tabName = "summary", icon = icon("table")))
+      menuItem("Data Summary", tabName = "summary", icon = icon("table"))
+    )
   ),
   
   dashboardBody(
+    # Beautiful custom header with navigation icons
+    tags$div(
+      class = "custom-header-section",
+      style = "position: fixed; top: 0; left: 0; right: 0; z-index: 1031; background: linear-gradient(135deg, #28202c 0%, #342a3a 100%); padding: 15px 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: space-between;",
+      
+      # Left side - Logo and title
+      tags$div(
+        style = "display: flex; align-items: center;",
+        tags$img(src = "images/rglogo.svg", height = "40px", style = "margin-right: 20px; filter: brightness(1.1);"),
+        tags$div(
+          tags$div("Audience Insight Tool", style = "color: white; font-size: 22px; font-weight: 600; margin: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); line-height: 1.2;"),
+          tags$div("Identifying target population hotspots with key characteristics. Proprietary technology: Reground Design, 2025.", 
+                  style = "color: #e0d6e8; font-size: 13px; margin: 4px 0 0 0; line-height: 1.3; opacity: 0.9;")
+        )
+      ),
+      
+      # Right side - Navigation icons (these will trigger the sidebar menu)
+      tags$div(
+        style = "display: flex; gap: 15px;",
+        actionButton("nav_to_map", "", 
+                    icon = icon("map"), 
+                    class = "nav-button",
+                    style = "background: rgba(231,76,60,0.8); border: 2px solid #e74c3c; color: white; border-radius: 8px; padding: 12px 16px; font-size: 18px; transition: all 0.3s ease;",
+                    title = "Interactive Map"),
+        actionButton("nav_to_summary", "", 
+                    icon = icon("table"), 
+                    class = "nav-button",
+                    style = "background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: white; border-radius: 8px; padding: 12px 16px; font-size: 18px; transition: all 0.3s ease;",
+                    title = "Data Summary")
+      )
+    ),
+    
+    # Add top margin to account for fixed header
+    tags$div(style = "margin-top: 80px;"),
+    
     tags$head(
       tags$style(HTML("
         .layer-checkbox {
@@ -263,9 +305,173 @@ ui <- dashboardPage(
           padding: 10px;
           margin: 10px 0;
         }
+        .box.box-primary {
+          border-top-color: #28202c !important;
+        }
+        .box.box-primary > .box-header {
+          background-color: #28202c !important;
+          color: white !important;
+        }
+        .box.box-primary > .box-header > .box-title {
+          color: white !important;
+        }
+        /* AGGRESSIVE HEADER OVERRIDE - Target every possible Shiny class */
+        .main-header, .main-header *, 
+        .main-header .navbar, .main-header .navbar *,
+        .skin-blue .main-header, .skin-blue .main-header *,
+        .skin-blue .main-header .navbar, .skin-blue .main-header .navbar *,
+        .skin-blue .main-header .navbar-header, .skin-blue .main-header .navbar-header *,
+        .navbar-header, .navbar-header *,
+        .navbar-static-top, .navbar-static-top *,
+        .navbar-default, .navbar-default * {
+          background-color: #28202c !important;
+          background: #28202c !important;
+          background-image: none !important;
+          border: none !important;
+          border-color: #28202c !important;
+        }
+        
+        /* Force header container styling */
+        .main-header {
+          background: linear-gradient(135deg, #28202c 0%, #342a3a 100%) !important;
+          border-bottom: 3px solid #1a1520 !important;
+          min-height: 70px !important;
+        }
+        
+        /* Navigation elements */
+        .main-header .navbar-nav > li > a,
+        .skin-blue .main-header .navbar-nav > li > a {
+          color: white !important;
+          background: transparent !important;
+        }
+        
+        /* Brand/title area */
+        .main-header .navbar-brand, .navbar-brand,
+        .skin-blue .main-header .navbar-brand {
+          color: white !important;
+          background-color: transparent !important;
+          background: transparent !important;
+          padding: 0 !important;
+          height: 70px !important;
+          line-height: 70px !important;
+          width: 100% !important;
+          max-width: none !important;
+        }
+        
+        /* Toggle button */
+        .skin-blue .main-header .navbar-toggle,
+        .main-header .navbar-toggle {
+          color: white !important;
+          background-color: rgba(255,255,255,0.1) !important;
+          border-color: rgba(255,255,255,0.2) !important;
+        }
+        /* Custom header container styling */
+        .custom-header {
+          background: linear-gradient(135deg, #28202c 0%, #342a3a 100%) !important;
+          padding: 15px 25px !important;
+          display: flex !important;
+          align-items: center !important;
+          min-height: 70px !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+          width: 100% !important;
+          margin: 0 !important;
+          border: none !important;
+        }
+        .header-logo {
+          margin-right: 15px;
+          filter: brightness(1.1);
+        }
+        .header-text {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+        .main-title {
+          color: white;
+          font-size: 20px;
+          font-weight: 600;
+          margin: 0;
+          text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        .subtitle {
+          color: #e0d6e8;
+          font-size: 12px;
+          margin: 3px 0 0 0;
+          line-height: 1.3;
+          opacity: 0.9;
+        }
+        /* Additional creative styling */
+        .content-wrapper {
+          background: linear-gradient(to bottom, #f8f9fa 0%, #f1f3f4 100%);
+        }
+        .box {
+          box-shadow: 0 2px 10px rgba(40, 32, 44, 0.1);
+          border: none;
+          border-radius: 8px;
+          overflow: hidden;
+        }
+        .box-header {
+          border-radius: 8px 8px 0 0;
+        }
+        /* Navigation button styling */
+        .nav-button:hover {
+          background: rgba(255,255,255,0.2) !important;
+          border-color: rgba(255,255,255,0.4) !important;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .nav-button.active {
+          background: rgba(231,76,60,0.8) !important;
+          border-color: #e74c3c !important;
+          box-shadow: 0 2px 8px rgba(231,76,60,0.3);
+        }
+        /* Full width content without sidebar */
+        .content-wrapper {
+          margin-left: 0 !important;
+          background: linear-gradient(to bottom, #f8f9fa 0%, #f1f3f4 100%);
+        }
+        /* Hide the sidebar completely */
+        .main-sidebar {
+          display: none !important;
+        }
+        .sidebar-collapse .main-sidebar {
+          display: none !important;
+        }
+      ")),
+      
+      # JavaScript to force header styling
+      tags$script(HTML("
+        $(document).ready(function(){
+          // Force header background styling with JavaScript
+          setTimeout(function(){
+            $('.main-header, .main-header .navbar, .navbar-header').css({
+              'background-color': '#28202c',
+              'background': '#28202c',
+              'background-image': 'none',
+              'border': 'none'
+            });
+            
+            $('.navbar-brand').css({
+              'background-color': 'transparent',
+              'background': 'transparent',
+              'padding': '0',
+              'height': '70px',
+              'width': '100%'
+            });
+            
+            // Apply custom header styling
+            $('.custom-header').css({
+              'background': 'linear-gradient(135deg, #28202c 0%, #342a3a 100%)',
+              'width': '100%',
+              'margin': '0',
+              'border': 'none'
+            });
+          }, 100);
+        });
       "))
     ),
     
+    # Traditional tabItems structure that works reliably
     tabItems(
       tabItem(tabName = "map",
         fluidRow(
@@ -352,8 +558,30 @@ ui <- dashboardPage(
   )
 )
 
-# Server Definition
 server <- function(input, output, session) {
+  # Navigation logic - connect header icons to sidebar menu
+  observeEvent(input$nav_to_map, {
+    # Update button styles
+    updateActionButton(session, "nav_to_map", 
+                      style = "background: rgba(231,76,60,0.8); border: 2px solid #e74c3c; color: white; border-radius: 8px; padding: 12px 16px; font-size: 18px; transition: all 0.3s ease;")
+    updateActionButton(session, "nav_to_summary", 
+                      style = "background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: white; border-radius: 8px; padding: 12px 16px; font-size: 18px; transition: all 0.3s ease;")
+    # Trigger the sidebar menu item programmatically
+    updateTabItems(session, "sidebar_menu", "map")
+  })
+  
+  observeEvent(input$nav_to_summary, {
+    # Update button styles
+    updateActionButton(session, "nav_to_summary", 
+                      style = "background: rgba(231,76,60,0.8); border: 2px solid #e74c3c; color: white; border-radius: 8px; padding: 12px 16px; font-size: 18px; transition: all 0.3s ease;")
+    updateActionButton(session, "nav_to_map", 
+                      style = "background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: white; border-radius: 8px; padding: 12px 16px; font-size: 18px; transition: all 0.3s ease;")
+    # Trigger the sidebar menu item programmatically
+    updateTabItems(session, "sidebar_menu", "summary")
+  })
+  
+  # Simple, reliable server logic from working version
+  
   # Use pre-loaded census data
   census_data <- reactive({
     input$refresh_data  # Dependency for refresh button
@@ -625,61 +853,93 @@ server <- function(input, output, session) {
       min_percentile <- min(data_sf$composite_percentile, na.rm = TRUE)
       print(paste("Percentile range:", min_percentile, "-", max_percentile))
       
+      # Check if top N filter is applied
+      is_top_n_filtered <- !is.null(input$top_n_tracts) && !is.na(input$top_n_tracts) && input$top_n_tracts > 0
+      
       if (max_percentile > 0 && !is.infinite(max_percentile)) {
-        # Create color palette based on percentile ranks
-        color_func <- switch(input$color_scheme,
-                            "plasma" = viridis::plasma,
-                            "viridis" = viridis::viridis, 
-                            "inferno" = viridis::inferno,
-                            "magma" = viridis::magma,
-                            viridis::plasma)
-        
-        pal <- colorNumeric(
-          palette = color_func(256),
-          domain = c(min_percentile, max_percentile),
-          na.color = "transparent"
-        )
-        
         # Create detailed tooltips
         tooltip_content <- create_tooltip_content(data_sf)
         
-        # Add polygons with color coding
-        map <- map %>%
-          addPolygons(
-            data = data_sf,
-            fillColor = ~pal(composite_percentile),
-            weight = 0.5,
-            opacity = 1,
-            color = "white",
-            dashArray = "",
-            fillOpacity = 0.7,
-            highlightOptions = highlightOptions(
-              weight = 2,
-              color = "#666",
+        if (is_top_n_filtered) {
+          # Use solid color for top N filtered tracts
+          map <- map %>%
+            addPolygons(
+              data = data_sf,
+              fillColor = "#28202c",
+              weight = 0.5,
+              opacity = 1,
+              color = "white",
               dashArray = "",
-              fillOpacity = 0.9,
-              bringToFront = TRUE
-            ),
-            popup = tooltip_content,
-            label = ~paste0(ifelse("borough" %in% names(.), borough, "NYC"), 
-                           ": ", round(composite_percentile, 1), "th percentile"),
-            labelOptions = labelOptions(
-              style = list("font-weight" = "normal", padding = "3px 8px"),
-              textsize = "13px",
-              direction = "auto"
+              fillOpacity = 0.7,
+              highlightOptions = highlightOptions(
+                weight = 2,
+                color = "#666",
+                dashArray = "",
+                fillOpacity = 0.9,
+                bringToFront = TRUE
+              ),
+              popup = tooltip_content,
+              label = ~paste0(ifelse("borough" %in% names(.), borough, "NYC"), 
+                             ": ", round(composite_percentile, 1), "th percentile"),
+              labelOptions = labelOptions(
+                style = list("font-weight" = "normal", padding = "3px 8px"),
+                textsize = "13px",
+                direction = "auto"
+              )
             )
-          ) %>%
-          addLegend(
-            pal = pal,
-            values = data_sf$composite_percentile,
-            opacity = 0.7,
-            title = "Percentile Rank<br>(0-100th)",
-            position = "bottomright",
-            labFormat = labelFormat(
-              suffix = "th",
-              digits = 0
-            )
+        } else {
+          # Create color palette based on percentile ranks
+          color_func <- switch(input$color_scheme,
+                              "plasma" = viridis::plasma,
+                              "viridis" = viridis::viridis, 
+                              "inferno" = viridis::inferno,
+                              "magma" = viridis::magma,
+                              viridis::plasma)
+          
+          pal <- colorNumeric(
+            palette = color_func(256),
+            domain = c(min_percentile, max_percentile),
+            na.color = "transparent"
           )
+          
+          # Add polygons with color coding
+          map <- map %>%
+            addPolygons(
+              data = data_sf,
+              fillColor = ~pal(composite_percentile),
+              weight = 0.5,
+              opacity = 1,
+              color = "white",
+              dashArray = "",
+              fillOpacity = 0.7,
+              highlightOptions = highlightOptions(
+                weight = 2,
+                color = "#666",
+                dashArray = "",
+                fillOpacity = 0.9,
+                bringToFront = TRUE
+              ),
+              popup = tooltip_content,
+              label = ~paste0(ifelse("borough" %in% names(.), borough, "NYC"), 
+                             ": ", round(composite_percentile, 1), "th percentile"),
+              labelOptions = labelOptions(
+                style = list("font-weight" = "normal", padding = "3px 8px"),
+                textsize = "13px",
+                direction = "auto"
+              )
+            ) %>%
+            addLegend(
+              pal = pal,
+              values = data_sf$composite_percentile,
+              opacity = 0.7,
+              title = "Percentile Rank<br>(0-100th)",
+              position = "bottomright",
+              labFormat = labelFormat(
+                suffix = "th",
+                digits = 0
+              )
+            )
+        }
       } else {
         # Create detailed tooltips for gray polygons too
         tooltip_content <- create_tooltip_content(data_sf)
@@ -800,7 +1060,7 @@ server <- function(input, output, session) {
       layer_labels <- map_chr(selected, function(x) layer_variables[[x]]$label)
       paste0("<strong>Composite Index of:</strong> ", 
              paste(layer_labels, collapse = ", "),
-             "<br><em>Areas shown in darker colors score high on ALL selected factors.</em>")
+             "<br><em>Areas shown in brighter colors score high on a combination of the selected factors.</em>")
     }
     
     # Add filter info if applicable
